@@ -1,0 +1,12 @@
+services:
+  Api.Server:
+    image: ${DOCKER_REGISTRY-}api-server
+    build: ./backend/Api.Server
+
+  Sub.Server:
+    image: ${DOCKER_REGISTRY-}sub-server
+    build: ./backend/Sub.Server
+
+  Frontend:
+    image: ${DOCKER_REGISTRY-}frontend
+    build: ./frontend

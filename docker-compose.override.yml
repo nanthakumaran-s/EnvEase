@@ -1,0 +1,21 @@
+version: "3.4"
+
+services:
+  Api.Server:
+    container_name: api-server
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "8000:80"
+
+  Sub.Server:
+    container_name: sub-server
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "8001:80"
+
+  Frontend:
+    container_name: frontend
+    ports:
+      - "8002:3000"
