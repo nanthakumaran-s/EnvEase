@@ -1,21 +1,38 @@
 version: "3.4"
 
 services:
-  Api.Server:
-    container_name: api-server
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    ports:
-      - "8000:80"
+  # Api.Server:
+  #   container_name: api-server
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #   ports:
+  #     - "8000:80"
 
-  Sub.Server:
-    container_name: sub-server
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    ports:
-      - "8001:80"
+  # Sub.Server:
+  #   container_name: sub-server
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #   ports:
+  #     - "8001:80"
 
-  Frontend:
-    container_name: frontend
+  # Frontend:
+  #   container_name: frontend
+  #   ports:
+  #     - "8002:3000"
+
+  MsSQL:
+    container_name: mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=root@123
     ports:
-      - "8002:3000"
+      - "1433:1433"
+    volumes:
+      - ./mssql-data:/var/opt/mssql/data
+
+  Redis:
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./cache:/data

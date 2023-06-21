@@ -1,3 +1,6 @@
+using Api.Server.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace Api.Server
 {
     public class Program
@@ -5,6 +8,12 @@ namespace Api.Server
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddDbContext<ApplicationDbContext>(options => 
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("dB")
+                )
+            ); 
 
 
             builder.Services.AddControllers();
@@ -22,6 +31,13 @@ namespace Api.Server
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+            app.UseCors(options =>
+                options
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+            );
 
 
             app.MapControllers();

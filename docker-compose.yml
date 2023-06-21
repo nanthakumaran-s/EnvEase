@@ -1,12 +1,18 @@
 services:
-  Api.Server:
-    image: ${DOCKER_REGISTRY-}api-server
-    build: ./backend/Api.Server
+  # Api.Server:
+  #   image: ${DOCKER_REGISTRY-}api-server
+  #   build: ./backend/Api.Server
 
-  Sub.Server:
-    image: ${DOCKER_REGISTRY-}sub-server
-    build: ./backend/Sub.Server
+  # Sub.Server:
+  #   image: ${DOCKER_REGISTRY-}sub-server
+  #   build: ./backend/Sub.Server
 
-  Frontend:
-    image: ${DOCKER_REGISTRY-}frontend
-    build: ./frontend
+  # Frontend:
+  #   image: ${DOCKER_REGISTRY-}frontend
+  #   build: ./frontend
+
+  MsSQL:
+    image: mcr.microsoft.com/mssql/server
+
+  Redis:
+    image: redis:6.2-alpine
