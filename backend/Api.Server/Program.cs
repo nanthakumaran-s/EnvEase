@@ -1,5 +1,13 @@
+global using Api.Server.Repos.UserRepo;
+global using Api.Server.Utils.Interfaces;
+global using Api.Server.Utils.Methods;
 using Api.Server.Data;
+using Api.Server.Repos.SessionRepo;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Api.Server
 {
@@ -13,12 +21,47 @@ namespace Api.Server
                 options.UseSqlServer(
                     builder.Configuration.GetConnectionString("dB")
                 )
-            ); 
+            );
+
+            var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("JwtConfig:Secret").Value!);
+            var tokenValidationParameter = new TokenValidationParameters()
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+            };
+
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(jwt =>
+            {
+                jwt.SaveToken = true;
+                jwt.TokenValidationParameters = tokenValidationParameter;
+            });
 
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            // Repositories
+            builder.Services.AddScoped<IUserRepo, UserRepo>();
+            builder.Services.AddScoped<ISessionRepo, SessionRepo>();
+
+            // Utils
+            builder.Services.AddScoped<IBCryptUtils, BCryptUtils>();
+            builder.Services.AddScoped<ISessionUtils, SessionUtils>();
+            builder.Services.AddScoped<IRedisUtils, RedisUtils>();
+
+            builder.Services.AddHttpContextAccessor();
+
 
             var app = builder.Build();
             
@@ -30,6 +73,7 @@ namespace Api.Server
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseCors(options =>

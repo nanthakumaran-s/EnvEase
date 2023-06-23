@@ -6,12 +6,12 @@ namespace Api.Server.Models
     {
         [Key]
         [Required]
-        public int id { get; set; }
+        public int Id { get; set; }
 
         [Required]
-        public string name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required]
-        public string api_key { get; set; }
+        public string Api_Key { get; set; } = string.Empty;
     }
 }

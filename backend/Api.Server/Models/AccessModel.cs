@@ -6,9 +6,9 @@ namespace Api.Server.Models
     {
         [Key]
         [Required]
-        public int id { get; set; }
+        public int Id { get; set; }
 
         [Required]
-        public string access { get; set; }
+        public string Access { get; set; } = string.Empty;
     }
 }

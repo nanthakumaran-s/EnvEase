@@ -7,12 +7,12 @@ namespace Api.Server.Models
     {
         [Key]
         [Required]
-        public int id { get; set; }
+        public int Id { get; set; }
 
         [ForeignKey("Enterprise")]
-        public int enterprise_id { get; set; }
+        public int Enterprise_Id { get; set; }
 
         [ForeignKey("Project")]
-        public int project_id { get; set; }
+        public int Project_Id { get; set; }
     }
 }

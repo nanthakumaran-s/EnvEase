@@ -6,18 +6,21 @@ namespace Api.Server.Models
     {
         [Key]
         [Required]
-        public int id { get; set; }
+        public int Id { get; set; }
 
         [Required]
-        public string name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required]
-        public string email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [Required]
-        public string password { get; set; }
+        public string Password_Hash { get; set; } = string.Empty;
 
         [Required]
-        public bool two_factor { get; set; }
+        public string Salt { get; set; } = string.Empty;
+
+        [Required]
+        public bool Two_Factor { get; set; }
     }
 }

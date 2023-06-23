@@ -15,6 +15,7 @@ namespace Api.Server.Data
         public DbSet<MapProjectEnterprise> MapProjectEnterprise { get; set; }
         public DbSet<RoleModel> Role { get; set; }
         public DbSet<AccessModel> Access { get; set; }
+        public DbSet<SessionModel> Session { get; set; }
 
     }
 }
