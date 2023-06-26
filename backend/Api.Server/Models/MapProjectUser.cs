@@ -10,15 +10,12 @@ namespace Api.Server.Models
         public int Id { get; set; }
 
         [ForeignKey("Users")]
-        public int User_Id { get; set; }
+        public int UserId { get; set; }
 
         [ForeignKey("Project")]
-        public int Project_Id { get; set; }
-
-        [ForeignKey("Role")]
-        public int Role_Id { get; set; }
+        public int ProjectId { get; set; }
 
         [ForeignKey("Access")]
-        public int Access_Id { get; set; }
+        public int AccessId { get; set; }
     }
 }

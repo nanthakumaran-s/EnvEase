@@ -35,7 +35,7 @@ namespace Api.Server.Repos.SessionRepo
 
         public IEnumerable<SessionModel> GetSessions(int user_id)
         {
-            return _dbContext.Session.Where(x => x.User_Id == user_id).ToList();
+            return _dbContext.Session.Where(x => x.UserId == user_id).ToList();
         }
 
         public void DeleteSession(SessionModel session)

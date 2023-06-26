@@ -10,9 +10,7 @@ namespace Api.Server.Data
         public DbSet<UsersModel> Users { get; set; }
         public DbSet<EnterpriseModel> Enterprise { get; set; }
         public DbSet<ProjectModel> Project { get; set; }
-        public DbSet<MapUserEnterprise> MapUserEnterprise { get; set; }
         public DbSet<MapProjectUser> MapProjectUser { get; set; }
-        public DbSet<MapProjectEnterprise> MapProjectEnterprise { get; set; }
         public DbSet<RoleModel> Role { get; set; }
         public DbSet<AccessModel> Access { get; set; }
         public DbSet<SessionModel> Session { get; set; }

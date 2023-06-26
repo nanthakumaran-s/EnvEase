@@ -10,25 +10,25 @@ namespace Api.Server.Models
         public int Id { get; set; }
 
         [Required]
-        public string Jwt_Id { get; set; } = string.Empty;
+        public string JwtId { get; set; } = string.Empty;
 
         [Required]
         public string Token { get; set; } = string.Empty;
 
         [Required]
-        public DateTime Added_Time { get; set; }
+        public DateTime AddedTime { get; set; }
 
         [Required]
-        public DateTime Expiry_Time { get; set; }
+        public DateTime ExpiryTime { get; set; }
 
         [Required]
-        public bool Is_Revoked { get; set; }
+        public bool IsRevoked { get; set; }
 
         [Required]
         public string Device { get; set; } = string.Empty;
 
         [ForeignKey("Users")]
-        public int User_Id { get; set; }
+        public int UserId { get; set; }
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Api.Server.Models
 {
@@ -12,6 +13,9 @@ namespace Api.Server.Models
         public string Name { get; set; } = string.Empty;
 
         [Required]
-        public string Api_Key { get; set; } = string.Empty;
+        public string ApiKey { get; set; } = string.Empty;
+
+        [ForeignKey("Enterprise")]
+        public int BelongsTo { get; set; }
     }
 }

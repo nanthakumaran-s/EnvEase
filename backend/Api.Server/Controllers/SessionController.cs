@@ -48,7 +48,7 @@ namespace Api.Server.Controllers
                 });
             }
 
-            if (user.Id != session.User_Id)
+            if (user.Id != session.UserId)
             {
                 return BadRequest(new
                 {
@@ -57,7 +57,7 @@ namespace Api.Server.Controllers
                 });
             }
 
-            session.Is_Revoked = true;
+            session.IsRevoked = true;
             _sessionRepo.UpdateSession(session);
             _sessionRepo.SaveChanges();
 
@@ -85,7 +85,7 @@ namespace Api.Server.Controllers
 
             foreach (var session in sessions)
             {
-                session.Is_Revoked = true;
+                session.IsRevoked = true;
                 _sessionRepo.UpdateSession(session);
             }
 
@@ -121,7 +121,7 @@ namespace Api.Server.Controllers
                 });
             }
 
-            if (user.Id != session.User_Id)
+            if (user.Id != session.UserId)
             {
                 return BadRequest(new
                 {
@@ -142,7 +142,7 @@ namespace Api.Server.Controllers
         [HttpPost("refresh-tokens"), AllowAnonymous]
         public IActionResult RefreshTokens(TokensDto request)
         {
-            var principal = _sessionUtils.VerifyAndGetPrincipal(request.Access_Token);
+            var principal = _sessionUtils.VerifyAndGetPrincipal(request.AccessToken);
             if (principal == null)
             {
                 return BadRequest(new
@@ -152,7 +152,7 @@ namespace Api.Server.Controllers
                 });
             }
 
-            var session = _sessionRepo.GetSessionByToken(request.Refresh_Token);
+            var session = _sessionRepo.GetSessionByToken(request.RefreshToken);
             if (session == null)
             {
                 return BadRequest(new
@@ -162,7 +162,7 @@ namespace Api.Server.Controllers
                 });
             }
 
-            var user = _userRepo.GetUserById(session.User_Id);
+            var user = _userRepo.GetUserById(session.UserId);
             if (user == null)
             {
                 return BadRequest(new
@@ -172,7 +172,7 @@ namespace Api.Server.Controllers
                 });
             }
 
-            if (session.Is_Revoked)
+            if (session.IsRevoked)
             {
                 return BadRequest(new
                 {
@@ -181,7 +181,7 @@ namespace Api.Server.Controllers
                 });
             }
 
-            if (principal.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti)?.Value != session.Jwt_Id)
+            if (principal.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti)?.Value != session.JwtId)
             {
                 return BadRequest(new
                 {
@@ -190,7 +190,7 @@ namespace Api.Server.Controllers
                 });
             }
 
-            if (session.Expiry_Time <= DateTime.Now)
+            if (session.ExpiryTime <= DateTime.Now)
             {
                 return BadRequest(new
                 {
@@ -201,8 +201,8 @@ namespace Api.Server.Controllers
 
             TokensDto newTokens = _sessionUtils.CreateTokens(user, false);
 
-            session.Token = newTokens.Refresh_Token;
-            session.Jwt_Id = _sessionUtils.VerifyAndGetPrincipal(newTokens.Access_Token)?.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti)?.Value!;
+            session.Token = newTokens.RefreshToken;
+            session.JwtId = _sessionUtils.VerifyAndGetPrincipal(newTokens.AccessToken)?.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti)?.Value!;
 
             _sessionRepo.UpdateSession(session);
             _sessionRepo.SaveChanges();

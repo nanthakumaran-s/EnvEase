@@ -4,6 +4,7 @@ using Api.Server.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Api.Server.Controllers
 {
@@ -23,7 +24,7 @@ namespace Api.Server.Controllers
             _sessionUtils = sessionUtils;
         }
 
-        [HttpPost("register"), Authorize(Roles = "Owner, Admin, Project Manager")]
+        [HttpPost("register"), Authorize(Roles = "Super Admin, Owner, Admin, HR, Project Manager")]
         public IActionResult Register(RegisterDto request)
         {
             UsersModel? repoUser = _userRepo.GetUser(request.Email);
@@ -35,10 +36,28 @@ namespace Api.Server.Controllers
                     message = "User already exists"
                 });
             }
+            UsersModel? requestedBy = _userRepo.GetUser(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)!.Value);
+            if (requestedBy == null)
+            {
+                return BadRequest(new
+                {
+                    status = false,
+                    message = "Invalid user according to token"
+                });
+            }
+
+            if (requestedBy.RoleId > request.RoleId) {
+                return BadRequest(new
+                {
+                    status = false,
+                    message = "Out of scope"
+                });
+            }
+
             UsersModel user = _mapper.Map<UsersModel>(request);
 
             var hash = _bcryptUtils.HashPassword(request.Password, out var salt);
-            user.Password_Hash = hash;
+            user.PasswordHash = hash;
             user.Salt = Convert.ToHexString(salt);
 
             _userRepo.CreateUser(user);
@@ -62,7 +81,7 @@ namespace Api.Server.Controllers
                 });
             }
                 
-            var isMatch = _bcryptUtils.VerifyPassword(request.Password, repoUser.Password_Hash, repoUser.Salt);
+            var isMatch = _bcryptUtils.VerifyPassword(request.Password, repoUser.PasswordHash, repoUser.Salt);
             if (isMatch == false)
             {
                 return BadRequest(new
@@ -71,7 +90,7 @@ namespace Api.Server.Controllers
                     message = "Password doesn't match"
                 });
             }
-            if (repoUser.Two_Factor == true)
+            if (repoUser.TwoFactor == true)
             {
                 // TODO
             }

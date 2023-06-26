@@ -1,8 +1,8 @@
-﻿using Api.Server.Dto.Incoming;
+﻿using Api.Server.Data;
+using Api.Server.Dto.Incoming;
 using Api.Server.Dto.Internal;
 using Api.Server.Models;
 using Api.Server.Repos.SessionRepo;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,32 +14,34 @@ namespace Api.Server.Utils.Methods
     {
         private readonly string _secretKey;
         private readonly ISessionRepo _sessionRepo;
+        private readonly ApplicationDbContext _dbContext;
 
-        public SessionUtils(IConfiguration configuration, ISessionRepo sessionRepo) 
+        public SessionUtils(IConfiguration configuration, ISessionRepo sessionRepo, ApplicationDbContext dbContext) 
         {
             _secretKey = configuration.GetSection("JwtConfig:Secret").Value!;
             _sessionRepo = sessionRepo;
+            _dbContext = dbContext;
         }
 
         public TokensDto CreateTokens(UsersModel user, bool isDbWrite, LoginDto? request = null)
         {
             TokensDto tokens = new()
             {
-                Access_Token = CreateJwtToken(user, out string jwt_token_id),
-                Refresh_Token = CreateRefreshToken(),
+                AccessToken = CreateJwtToken(user, out string jwt_token_id),
+                RefreshToken = CreateRefreshToken(),
             };
 
             if (isDbWrite)
             {
                 SessionModel session = new()
                 {
-                    Jwt_Id = jwt_token_id,
-                    Token = tokens.Refresh_Token,
-                    Added_Time = DateTime.Now,
-                    Expiry_Time = DateTime.Now.AddMonths(6),
-                    Is_Revoked = false,
+                    JwtId = jwt_token_id,
+                    Token = tokens.RefreshToken,
+                    AddedTime = DateTime.Now,
+                    ExpiryTime = DateTime.Now.AddMonths(6),
+                    IsRevoked = false,
                     Device = request!.Device,
-                    User_Id = user.Id,
+                    UserId = user.Id,
                 };
 
                 _sessionRepo.CreateSession(session);
@@ -73,11 +75,12 @@ namespace Api.Server.Utils.Methods
         private string CreateJwtToken(UsersModel user, out string jwt_token_id)
         {
             jwt_token_id = Guid.NewGuid().ToString();
+            RoleModel role = _dbContext.Role.Where(x => x.Id == user.RoleId).FirstOrDefault()!;
             List<Claim> claims = new()
             {
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.Role, "Employee"),
+                new Claim(ClaimTypes.Role, role.Role),
                 new Claim(JwtRegisteredClaimNames.Jti, jwt_token_id),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToUniversalTime().ToString())
             };

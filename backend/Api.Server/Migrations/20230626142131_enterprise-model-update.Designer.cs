@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230623052953_session")]
-    partial class session
+    [Migration("20230626142131_enterprise-model-update")]
+    partial class enterprisemodelupdate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,9 @@ namespace Api.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -57,25 +60,6 @@ namespace Api.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Enterprise");
-                });
-
-            modelBuilder.Entity("Api.Server.Models.MapProjectEnterprise", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Enterprise_Id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Project_Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MapProjectEnterprise");
                 });
 
             modelBuilder.Entity("Api.Server.Models.MapProjectUser", b =>
@@ -86,43 +70,18 @@ namespace Api.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Access_Id")
+                    b.Property<int>("AccessId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Project_Id")
+                    b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Role_Id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("User_Id")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.ToTable("MapProjectUser");
-                });
-
-            modelBuilder.Entity("Api.Server.Models.MapUserEnterprise", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Enterprise_Id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Role_Id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("User_Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MapUserEnterprise");
                 });
 
             modelBuilder.Entity("Api.Server.Models.ProjectModel", b =>
@@ -133,9 +92,12 @@ namespace Api.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Api_Key")
+                    b.Property<string>("ApiKey")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("BelongsTo")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -171,20 +133,20 @@ namespace Api.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Added_Time")
+                    b.Property<DateTime>("AddedTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Device")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("Expiry_Time")
+                    b.Property<DateTime>("ExpiryTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("Is_Revoked")
+                    b.Property<bool>("IsRevoked")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Jwt_Id")
+                    b.Property<string>("JwtId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -192,7 +154,7 @@ namespace Api.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("User_Id")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -212,19 +174,25 @@ namespace Api.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("EnterpriseId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password_Hash")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Salt")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Two_Factor")
+                    b.Property<bool>("TwoFactor")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");

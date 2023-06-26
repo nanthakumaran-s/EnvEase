@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Api.Server.Models
 {
@@ -15,12 +16,19 @@ namespace Api.Server.Models
         public string Email { get; set; } = string.Empty;
 
         [Required]
-        public string Password_Hash { get; set; } = string.Empty;
+        public string PasswordHash { get; set; } = string.Empty;
 
         [Required]
         public string Salt { get; set; } = string.Empty;
 
         [Required]
-        public bool Two_Factor { get; set; }
+        public bool TwoFactor { get; set; }
+
+        [ForeignKey("Enterprise")]
+        public int EnterpriseId { get; set; }
+
+        [ForeignKey("Role")]
+        public int RoleId { get; set; }
+
     }
 }

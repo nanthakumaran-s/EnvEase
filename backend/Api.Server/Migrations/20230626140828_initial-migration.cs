@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -29,25 +30,12 @@ namespace Api.Server.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Enterprise", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MapProjectEnterprise",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Enterprise_Id = table.Column<int>(type: "int", nullable: false),
-                    Project_Id = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MapProjectEnterprise", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -56,29 +44,13 @@ namespace Api.Server.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    User_Id = table.Column<int>(type: "int", nullable: false),
-                    Project_Id = table.Column<int>(type: "int", nullable: false),
-                    Role_Id = table.Column<int>(type: "int", nullable: false),
-                    Access_Id = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    ProjectId = table.Column<int>(type: "int", nullable: false),
+                    AccessId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MapProjectUser", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MapUserEnterprise",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    User_Id = table.Column<int>(type: "int", nullable: false),
-                    Enterprise_Id = table.Column<int>(type: "int", nullable: false),
-                    Role_Id = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MapUserEnterprise", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -88,7 +60,8 @@ namespace Api.Server.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Api_Key = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ApiKey = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BelongsTo = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -109,6 +82,25 @@ namespace Api.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Session",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    JwtId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AddedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExpiryTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsRevoked = table.Column<bool>(type: "bit", nullable: false),
+                    Device = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Session", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -116,8 +108,11 @@ namespace Api.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Two_Factor = table.Column<bool>(type: "bit", nullable: false)
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Salt = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TwoFactor = table.Column<bool>(type: "bit", nullable: false),
+                    EnterpriseId = table.Column<int>(type: "int", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -135,19 +130,16 @@ namespace Api.Server.Migrations
                 name: "Enterprise");
 
             migrationBuilder.DropTable(
-                name: "MapProjectEnterprise");
-
-            migrationBuilder.DropTable(
                 name: "MapProjectUser");
-
-            migrationBuilder.DropTable(
-                name: "MapUserEnterprise");
 
             migrationBuilder.DropTable(
                 name: "Project");
 
             migrationBuilder.DropTable(
                 name: "Role");
+
+            migrationBuilder.DropTable(
+                name: "Session");
 
             migrationBuilder.DropTable(
                 name: "Users");
