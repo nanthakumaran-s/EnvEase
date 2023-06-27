@@ -4,6 +4,7 @@ using Api.Server.Repos.EnterpriseRepo;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Api.Server.Controllers
 {
@@ -12,11 +13,13 @@ namespace Api.Server.Controllers
     public class EnterpriseController : ControllerBase
     {
         private readonly IMapper _mapper;
+        private readonly IUserRepo _userRepo;
         private readonly IEnterpriseRepo _enterpriseRepo;
 
-        public EnterpriseController(IMapper mapper, IEnterpriseRepo enterpriseRepo)
+        public EnterpriseController(IMapper mapper, IEnterpriseRepo enterpriseRepo, IUserRepo userRepo)
         {
             _mapper = mapper;
+            _userRepo = userRepo;
             _enterpriseRepo = enterpriseRepo;
         }
 
@@ -31,6 +34,35 @@ namespace Api.Server.Controllers
             {
                 status = true,
                 message = "Enterprise created"
+            });
+        }
+
+        [HttpGet, Authorize]
+        public IActionResult GetEnterprise()
+        {
+            UsersModel? user = _userRepo.GetUser(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)!.Value);
+            if (user == null)
+            {
+                return BadRequest(new
+                {
+                    status = false,
+                    message = "Invalid tokens"
+                });
+            }
+
+            EnterpriseModel? enterprise = _enterpriseRepo.GetEnterprise(user.EnterpriseId);
+            if (enterprise == null)
+            {
+                return BadRequest(new {
+                    status = false,
+                    message = "No enterprise found"
+                });
+            }
+
+            return Ok(new
+            {
+                status = true,
+                enterprise,
             });
         }
     }

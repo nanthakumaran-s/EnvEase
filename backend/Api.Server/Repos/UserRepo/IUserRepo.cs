@@ -7,7 +7,8 @@ namespace Api.Server.Repos.UserRepo
         bool SaveChanges();
         void CreateUser(UsersModel user);
         UsersModel? GetUser(string email);
-        UsersModel? GetUserById(int id);
+        UsersModel? GetUser(int id);
+        UsersModel? GetUser(int id, int enterpriseId);
         void UpdateUser(UsersModel user);
     }
 }

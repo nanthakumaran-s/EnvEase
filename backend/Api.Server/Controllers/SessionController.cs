@@ -162,7 +162,7 @@ namespace Api.Server.Controllers
                 });
             }
 
-            var user = _userRepo.GetUserById(session.UserId);
+            var user = _userRepo.GetUser(session.UserId);
             if (user == null)
             {
                 return BadRequest(new

@@ -1,6 +1,6 @@
-﻿using System.Security.Cryptography;
+﻿using Api.Server.Dto.Internal;
+using System.Security.Cryptography;
 using System.Text;
-using Api.Server.Utils.Interfaces;
 
 namespace Api.Server.Utils.Methods
 {
@@ -31,12 +31,29 @@ namespace Api.Server.Utils.Methods
             return CryptographicOperations.FixedTimeEquals(hashToCompare, Convert.FromHexString(hash));
         }
 
-        private byte[] ToByte(string salt)
+        public ProjectTokensDto CreateApiKeys(string name)
+        {
+            return new ProjectTokensDto()
+            {
+                ApiKey = CreateRandom(16),
+                ApiSecret = CreateRandom(32),
+            };
+        }
+
+        private static byte[] ToByte(string salt)
         {
             return Enumerable.Range(0, salt.Length)
                 .Where(x => x % 2 == 0)
                 .Select(x => Convert.ToByte(salt.Substring(x, 2), 16))
                 .ToArray();
+        }
+
+        private static string CreateRandom(int len)
+        {
+            var randomNumber = new byte[len];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            return Convert.ToBase64String(randomNumber);
         }
     }
 }

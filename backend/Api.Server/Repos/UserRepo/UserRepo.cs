@@ -27,9 +27,14 @@ namespace Api.Server.Repos.UserRepo
             return _dbContext.Users.Where(u => u.Email == email).FirstOrDefault();
         }
 
-        public UsersModel? GetUserById(int id)
+        public UsersModel? GetUser(int id)
         {
             return _dbContext.Users.Where(u => u.Id == id).FirstOrDefault();
+        }
+
+        public UsersModel? GetUser(int id, int enterpriseId)
+        {
+            return _dbContext.Users.Where(u => u.Id == id && u.EnterpriseId == enterpriseId).FirstOrDefault();
         }
 
         public void UpdateUser(UsersModel user)

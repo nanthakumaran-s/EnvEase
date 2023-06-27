@@ -3,6 +3,7 @@ global using Api.Server.Utils.Interfaces;
 global using Api.Server.Utils.Methods;
 using Api.Server.Data;
 using Api.Server.Repos.EnterpriseRepo;
+using Api.Server.Repos.ProjectRepo;
 using Api.Server.Repos.SessionRepo;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -55,6 +56,7 @@ namespace Api.Server
             builder.Services.AddScoped<IUserRepo, UserRepo>();
             builder.Services.AddScoped<ISessionRepo, SessionRepo>();
             builder.Services.AddScoped<IEnterpriseRepo, EnterrpiseRepo>();
+            builder.Services.AddScoped<IProjectRepo, ProjectRepo>();
 
             // Utils
             builder.Services.AddScoped<IBCryptUtils, BCryptUtils>();

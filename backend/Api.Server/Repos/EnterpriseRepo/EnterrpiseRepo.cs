@@ -15,9 +15,9 @@ namespace Api.Server.Repos.EnterpriseRepo
             _dbContext.Enterprise.Add(enterprise);
         }
         
-        public EnterpriseModel? GetEnterprise(string name)
+        public EnterpriseModel? GetEnterprise(int Id)
         {
-            return _dbContext.Enterprise.Where(x => x.Name == name).FirstOrDefault();
+            return _dbContext.Enterprise.Where(x => x.Id == Id).FirstOrDefault();
         }
 
         public void UpdateEnterprise(EnterpriseModel enterprise)
