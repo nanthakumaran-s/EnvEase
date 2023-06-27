@@ -14,6 +14,7 @@ namespace Api.Server.Profiles
 
             // Outgoing
             CreateMap<UsersModel, AuthenticatedUser>();
+            CreateMap<UsersModel, GetUserOutDto>();
         }
     }
 }

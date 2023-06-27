@@ -4,11 +4,19 @@ namespace Api.Server.Repos.UserRepo
 {
     public interface IUserRepo
     {
-        bool SaveChanges();
+        // Users
         void CreateUser(UsersModel user);
         UsersModel? GetUser(string email);
         UsersModel? GetUser(int id);
         UsersModel? GetUser(int id, int enterpriseId);
         void UpdateUser(UsersModel user);
+
+
+        // Role
+        RoleModel? GetRole(int id);
+
+
+        // Common
+        bool SaveChanges();
     }
 }

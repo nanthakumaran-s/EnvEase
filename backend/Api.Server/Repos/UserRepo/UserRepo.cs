@@ -42,6 +42,11 @@ namespace Api.Server.Repos.UserRepo
             _dbContext.Users.Update(user);
         }
 
+        public RoleModel? GetRole(int id)
+        {
+            return _dbContext.Role.Where(r => r.Id == id).FirstOrDefault();
+        }
+
         public bool SaveChanges()
         {
             return (_dbContext.SaveChanges() >= 0);
