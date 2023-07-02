@@ -22,7 +22,7 @@ export const theme = extendTheme({
       900: "#90403d",
     },
     border: "#e3e7e9",
-    bg: "#f5f8fa",
+    bg: "#F5F8FA",
     secBg: "#DEE6F5",
   },
 });

@@ -34,10 +34,10 @@ const useAxios = (method, url) => {
         accessToken: tokens.accessToken,
         refreshToken: tokens.refreshToken,
       });
-      console.log("refresh token", resp.data);
       return resp.data;
     } catch (e) {
       console.log("Error", e);
+      setError(e);
     }
   };
 
@@ -76,7 +76,6 @@ const useAxios = (method, url) => {
         url: url,
         data: reqData,
       });
-      console.log(response);
       setData(response);
     } catch (error) {
       console.error(error);

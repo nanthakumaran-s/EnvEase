@@ -49,7 +49,9 @@ const Auth = () => {
         return;
       }
     }
+  }, [resData, navigate]);
 
+  useEffect(() => {
     if (resErr != null) {
       setError({
         status: true,
@@ -59,7 +61,7 @@ const Auth = () => {
       });
       return;
     }
-  }, [resData, resErr, navigate]);
+  }, [resErr]);
 
   const {
     register,
