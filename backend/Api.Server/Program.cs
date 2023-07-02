@@ -45,6 +45,15 @@ namespace Api.Server
                 jwt.TokenValidationParameters = tokenValidationParameter;
             });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CORSPolicy",
+                    builder => builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
+
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -62,6 +71,7 @@ namespace Api.Server
             builder.Services.AddScoped<IBCryptUtils, BCryptUtils>();
             builder.Services.AddScoped<ISessionUtils, SessionUtils>();
             builder.Services.AddScoped<IRedisUtils, RedisUtils>();
+            builder.Services.AddScoped<IEmailUtils, EmailUtils>();
 
             builder.Services.AddHttpContextAccessor();
 
@@ -74,17 +84,10 @@ namespace Api.Server
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
-
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseCors(options =>
-                options
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-            );
+            app.UseCors("CORSPolicy");
 
 
             app.MapControllers();

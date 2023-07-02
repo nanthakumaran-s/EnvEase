@@ -7,5 +7,6 @@ namespace Api.Server.Utils.Interfaces
         string HashPassword(string password, out byte[] salt);
         bool VerifyPassword(string password, string hash, string salt);
         ProjectTokensDto CreateApiKeys(string name);
+        string HashString(string name);
     }
 }

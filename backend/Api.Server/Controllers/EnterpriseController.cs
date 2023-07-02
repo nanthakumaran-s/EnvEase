@@ -15,18 +15,21 @@ namespace Api.Server.Controllers
         private readonly IMapper _mapper;
         private readonly IUserRepo _userRepo;
         private readonly IEnterpriseRepo _enterpriseRepo;
+        private readonly IBCryptUtils _bCryptUtils;
 
-        public EnterpriseController(IMapper mapper, IEnterpriseRepo enterpriseRepo, IUserRepo userRepo)
+        public EnterpriseController(IMapper mapper, IEnterpriseRepo enterpriseRepo, IUserRepo userRepo, IBCryptUtils bCryptUtils)
         {
             _mapper = mapper;
             _userRepo = userRepo;
             _enterpriseRepo = enterpriseRepo;
+            _bCryptUtils = bCryptUtils;
         }
 
         [HttpPost, Authorize(Roles = "Super Admin")]
         public IActionResult AddEnterprise(AddEnterpriseDto request)
         {
             EnterpriseModel enterpriseModel = _mapper.Map<EnterpriseModel>(request);
+            enterpriseModel.HashKey = _bCryptUtils.HashString(request.Name);
             _enterpriseRepo.AddEnterprise(enterpriseModel);
             _enterpriseRepo.SaveChanges();
 
