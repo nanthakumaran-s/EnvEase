@@ -4,8 +4,6 @@ import useAxios from "../hooks/useAxios";
 const Dashboard = () => {
   const [data, error, loading, trigger] = useAxios("GET", "/user", {});
 
-  useEffect(() => {}, []);
-
   useEffect(() => {
     trigger();
   }, []);

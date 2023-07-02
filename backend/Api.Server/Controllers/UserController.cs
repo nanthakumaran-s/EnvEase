@@ -44,7 +44,7 @@ namespace Api.Server.Controllers
 
             return Ok(new
             {
-                status = false,
+                status = true,
                 user = userOut
             });
         }

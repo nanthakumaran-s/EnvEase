@@ -40,6 +40,20 @@ namespace Api.Server.Utils.Methods
             };
         }
 
+        public string HashString(string name)
+        {
+            var salt = RandomNumberGenerator.GetBytes(8);
+            var hash = Rfc2898DeriveBytes.Pbkdf2(
+                Encoding.UTF8.GetBytes(name),
+                salt,
+                10,
+                hashAlgorithm,
+                8
+            );
+
+            return Convert.ToHexString(hash);
+        }
+
         private static byte[] ToByte(string salt)
         {
             return Enumerable.Range(0, salt.Length)
