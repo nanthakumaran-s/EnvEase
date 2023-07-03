@@ -8,7 +8,7 @@ import {
 import React from "react";
 import { MdChevronRight } from "react-icons/md";
 
-const BreadCrumbBar = () => {
+const BreadCrumbBar = ({ section }) => {
   return (
     <Breadcrumb separator={<MdChevronRight color="blackAlpha" />}>
       <BreadcrumbItem>
@@ -32,7 +32,7 @@ const BreadCrumbBar = () => {
       </BreadcrumbItem>
       <BreadcrumbItem>
         <Text fontSize="15" fontWeight="500">
-          Secrets
+          {section}
         </Text>
       </BreadcrumbItem>
     </Breadcrumb>

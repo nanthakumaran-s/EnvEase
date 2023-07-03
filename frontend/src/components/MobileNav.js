@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
 import { TiArrowSortedDown } from "react-icons/ti";
+import { Link } from "react-router-dom";
 
 export const MobileNav = ({ onOpen, ...rest }) => {
   return (
@@ -72,12 +73,16 @@ export const MobileNav = ({ onOpen, ...rest }) => {
                 color="blackAlpha.400"
                 letterSpacing="widest"
               >
-                <MenuItem fontSize="15" color="blackAlpha">
-                  Manage Account
-                </MenuItem>
-                <MenuItem fontSize="15" color="blackAlpha">
-                  Organization
-                </MenuItem>
+                <Link to="/profile-settings">
+                  <MenuItem fontSize="15" color="blackAlpha">
+                    Manage Account
+                  </MenuItem>
+                </Link>
+                <Link to="/org-settings">
+                  <MenuItem fontSize="15" color="blackAlpha">
+                    Organization
+                  </MenuItem>
+                </Link>
               </MenuGroup>
 
               <MenuDivider />

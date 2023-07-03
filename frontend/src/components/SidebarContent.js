@@ -10,7 +10,6 @@ import {
 import React, { useState } from "react";
 import {
   PiCheckBold,
-  PiFilesDuotone,
   PiGearDuotone,
   PiLockKeyDuotone,
   PiUsersThreeDuotone,
@@ -21,7 +20,6 @@ import { Link, useLocation } from "react-router-dom";
 const LinkItems = [
   { name: "Secrets", icon: PiLockKeyDuotone, link: "/dashboard" },
   { name: "Members", icon: PiUsersThreeDuotone, link: "/members" },
-  { name: "Logs", icon: PiFilesDuotone, link: "/logs" },
   { name: "Settings", icon: PiGearDuotone, link: "/settings" },
 ];
 
