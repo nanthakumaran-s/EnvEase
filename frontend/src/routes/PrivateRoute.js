@@ -12,9 +12,11 @@ const PrivateRoute = () => {
 
   useEffect(() => {
     if (data) {
+      console.log(data);
       setUser({
         name: data.user.name,
         email: data.user.email,
+        twoFactor: data.user.twoFactor,
         enterprise: {
           id: data.user.enterprise.id,
           name: data.user.enterprise.name,

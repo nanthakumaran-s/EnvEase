@@ -3,6 +3,7 @@ import { atom } from "recoil";
 export const userDefault = {
   name: "",
   email: "",
+  twoFactor: false,
   enterprise: {
     id: -1,
     name: "",
