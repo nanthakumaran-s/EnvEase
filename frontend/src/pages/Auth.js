@@ -31,7 +31,12 @@ const Auth = () => {
   });
 
   const navigate = useNavigate();
-  const [resData, resErr, loading, trigger] = useAxios("POST", "/auth/login");
+  const {
+    data: resData,
+    error: resErr,
+    loading,
+    trigger,
+  } = useAxios("POST", "/auth/login");
 
   useEffect(() => {
     if (resData != null) {
@@ -55,7 +60,7 @@ const Auth = () => {
     if (resErr != null) {
       setError({
         status: true,
-        message: resErr.response.data
+        message: resErr.response
           ? resErr.response.data.message
           : "There was an error processing your request",
       });

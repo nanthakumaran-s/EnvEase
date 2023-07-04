@@ -8,6 +8,9 @@ import Settings from "./pages/Settings";
 import ProfileSettings from "./pages/ProfileSettings";
 import OrgSettings from "./pages/OrgSettings";
 
+import "@inovua/reactdatagrid-community/base.css";
+import "@inovua/reactdatagrid-community/theme/default-light.css";
+
 function App() {
   return (
     <Router>

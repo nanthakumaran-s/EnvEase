@@ -173,7 +173,7 @@ const Members = () => {
         </ModalContent>
       </Modal>
 
-      <BreadCrumbBar section="Members" />
+      <BreadCrumbBar sections={["Some Project", "Members"]} />
       <Flex mt={4} alignItems="center" justifyContent="space-between">
         <Heading fontSize="24">Members</Heading>
         <Button fontSize="14" fontWeight="500" leftIcon={<Icon as={BiPlus} />}>

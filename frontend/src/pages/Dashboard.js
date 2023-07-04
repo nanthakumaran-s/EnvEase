@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-// import useAxios from "../hooks/useAxios";
 import SidebarWithHeader from "../components/SidebarWithHeader";
 import BreadCrumbBar from "../components/BreadCrumbBar";
 import {
@@ -27,9 +26,6 @@ import {
 } from "@chakra-ui/react";
 import { TiArrowSortedDown } from "react-icons/ti";
 import ReactDataGrid from "@inovua/reactdatagrid-community";
-import "@inovua/reactdatagrid-community/base.css";
-import "@inovua/reactdatagrid-community/theme/default-light.css";
-
 import { gridStyle, headerProps } from "../utils/constants";
 import { HiOutlinePencil } from "react-icons/hi";
 import {
@@ -44,16 +40,6 @@ import { PiCheckBold } from "react-icons/pi";
 import { useForm } from "react-hook-form";
 
 const Dashboard = () => {
-  // const [data, error, loading, trigger] = useAxios("GET", "/user", {});
-
-  //   useEffect(() => {
-  //     console.log(data);
-  //   }, [data]);
-
-  //   useEffect(() => {
-  //     trigger();
-  //   }, []);
-
   const [dataForGrid, setDataForGrid] = useState([
     {
       id: 1,
@@ -324,7 +310,7 @@ const Dashboard = () => {
         </ModalContent>
       </Modal>
 
-      <BreadCrumbBar section="Secrets" />
+      <BreadCrumbBar sections={["Some Project", "Secrets"]} />
       <Flex mt={4} alignItems="center" justifyContent="space-between">
         <Heading fontSize="24">Secrets</Heading>
         <Select

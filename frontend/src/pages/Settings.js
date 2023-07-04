@@ -4,15 +4,13 @@ import BreadCrumbBar from "../components/BreadCrumbBar";
 import { Flex, Heading, Highlight, Text } from "@chakra-ui/layout";
 import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input } from "@chakra-ui/input";
-import { Button, IconButton } from "@chakra-ui/button";
-import { Icon } from "@chakra-ui/icon";
-import { FiCopy } from "react-icons/fi";
+import { Button } from "@chakra-ui/button";
 import CopyToClipboard from "../components/CopyToClipboard";
 
 const Settings = () => {
   return (
     <SidebarWithHeader>
-      <BreadCrumbBar section="Settings" />
+      <BreadCrumbBar sections={["Some Project", "Settings"]} />
       <Flex mt={4} alignItems="center" justifyContent="space-between">
         <Heading fontSize="24">Settings</Heading>
       </Flex>

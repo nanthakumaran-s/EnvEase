@@ -84,7 +84,7 @@ const useAxios = (method, url) => {
     setLoading(false);
   };
 
-  return [data, error, loading, trigger];
+  return { data, error, loading, trigger };
 };
 
 export default useAxios;

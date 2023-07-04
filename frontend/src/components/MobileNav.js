@@ -14,9 +14,20 @@ import {
 } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
 import { TiArrowSortedDown } from "react-icons/ti";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { userDefault, userAtom } from "../state/user.atom";
 
 export const MobileNav = ({ onOpen, ...rest }) => {
+  const [user, setUser] = useRecoilState(userAtom);
+  const navigate = useNavigate();
+
+  const handleSignout = async () => {
+    setUser(userDefault);
+    localStorage.removeItem("tokens");
+    navigate("/auth");
+  };
+
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -37,17 +48,11 @@ export const MobileNav = ({ onOpen, ...rest }) => {
       />
 
       <HStack spacing={{ base: "0", md: "6" }}>
-        {/* <IconButton
-            size="lg"
-            variant="ghost"
-            aria-label="open menu"
-            icon={<FiBell />}
-          /> */}
         <Flex alignItems={"center"}>
           <Menu>
             <MenuButton transition="all 0.3s">
               <Flex px="5" py="3" alignItems="center" cursor="pointer">
-                <Avatar src="/avatar512.png" name="Nanthakumaran S" size="sm" />
+                <Avatar src="/avatar512.png" name={user.name} size="sm" />
                 <Flex
                   ml="4"
                   flexDirection="column"
@@ -55,10 +60,10 @@ export const MobileNav = ({ onOpen, ...rest }) => {
                   alignItems="flex-start"
                 >
                   <Text fontSize="14" fontWeight="400">
-                    Nanthakumaran S
+                    {user.name}
                   </Text>
                   <Text fontSize="12" fontWeight="500" color="blackAlpha.500">
-                    Presidio
+                    {user.enterprise.name}
                   </Text>
                 </Flex>
                 <Flex ml="5">
@@ -86,7 +91,11 @@ export const MobileNav = ({ onOpen, ...rest }) => {
               </MenuGroup>
 
               <MenuDivider />
-              <MenuItem fontSize="15" color="blackAlpha">
+              <MenuItem
+                fontSize="15"
+                color="blackAlpha"
+                onClick={handleSignout}
+              >
                 Sign out
               </MenuItem>
             </MenuList>
