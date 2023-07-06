@@ -41,6 +41,7 @@ import { useRecoilValue } from "recoil";
 import { currentProjectAtom, projectsAtom } from "../state/projects.atom";
 import useAxios from "../hooks/useAxios";
 import useCustomToast from "../hooks/useCustomToast";
+import { userAccess } from "../state/user.atom";
 
 const type = ["Development", "Testing", "Production"];
 
@@ -71,6 +72,7 @@ const Dashboard = () => {
   const projects = useRecoilValue(projectsAtom);
   const currentProject = useRecoilValue(currentProjectAtom);
   const [selectedType, setSelectedType] = useState(type[0]);
+  const access = useRecoilValue(userAccess);
 
   useEffect(() => {
     if (projects.length > 0) {
@@ -246,63 +248,69 @@ const Dashboard = () => {
       render: ({ data }) => {
         return (
           <Flex alignItems="center">
-            <Tooltip
-              label={data.toShow ? "Unreveal" : "Reveal"}
-              placement="top"
-              hasArrow
-            >
-              <IconButton
-                icon={<Icon as={data.toShow ? FiEyeOff : FiEye} />}
-                color="black"
-                bg="transparent"
-                _hover={{
-                  color: "orange.600",
-                }}
-                onClick={() => {
-                  setDataForGrid(
-                    dataForGrid.map((obj) => {
-                      if (obj.id === data.id) {
-                        obj.toShow = !obj.toShow;
-                        console.log(obj);
-                      }
-                      return obj;
-                    })
-                  );
-                }}
-              />
-            </Tooltip>
-            <Tooltip label="Edit" placement="top" hasArrow>
-              <IconButton
-                icon={<Icon as={HiOutlinePencil} />}
-                color="black"
-                bg="transparent"
-                _hover={{
-                  color: "blue.500",
-                }}
-                onClick={() => {
-                  setIsUpdate(true);
-                  setIdToUpdate(data.id);
-                  setValue("key", data.key);
-                  setValue("value", data.value);
-                  onOpen();
-                }}
-              />
-            </Tooltip>
-            <Tooltip label="Delete" placement="top" hasArrow>
-              <IconButton
-                icon={<Icon as={FiTrash2} />}
-                color="black"
-                bg="transparent"
-                _hover={{
-                  color: "brand.500",
-                }}
-                onClick={() => {
-                  deleteTrigger({
-                    id: data.id,
-                  });
-                }}
-              />
-            </Tooltip>
+            {(access === "Read" || access === "Read Write") && (
+              <Tooltip
+                label={data.toShow ? "Unreveal" : "Reveal"}
+                placement="top"
+                hasArrow
+              >
+                <IconButton
+                  icon={<Icon as={data.toShow ? FiEyeOff : FiEye} />}
+                  color="black"
+                  bg="transparent"
+                  _hover={{
+                    color: "orange.600",
+                  }}
+                  onClick={() => {
+                    setDataForGrid(
+                      dataForGrid.map((obj) => {
+                        if (obj.id === data.id) {
+                          obj.toShow = !obj.toShow;
+                          console.log(obj);
+                        }
+                        return obj;
+                      })
+                    );
+                  }}
+                />
+              </Tooltip>
+            )}
+            {access === "Read Write" && (
+              <Tooltip label="Edit" placement="top" hasArrow>
+                <IconButton
+                  icon={<Icon as={HiOutlinePencil} />}
+                  color="black"
+                  bg="transparent"
+                  _hover={{
+                    color: "blue.500",
+                  }}
+                  onClick={() => {
+                    setIsUpdate(true);
+                    setIdToUpdate(data.id);
+                    setValue("key", data.key);
+                    setValue("value", data.value);
+                    onOpen();
+                  }}
+                />
+              </Tooltip>
+            )}
+            {access === "Read Write" && (
+              <Tooltip label="Delete" placement="top" hasArrow>
+                <IconButton
+                  icon={<Icon as={FiTrash2} />}
+                  color="black"
+                  bg="transparent"
+                  _hover={{
+                    color: "brand.500",
+                  }}
+                  onClick={() => {
+                    deleteTrigger({
+                      id: data.id,
+                    });
+                  }}
+                />
+              </Tooltip>
+            )}
           </Flex>
         );
       },
@@ -477,32 +485,38 @@ const Dashboard = () => {
             mt={3}
             gap="3"
           >
-            <Tooltip
-              label={revealAll ? "Unreveal all" : "Reveal all"}
-              placement="top"
-              hasArrow
-            >
-              <IconButton
-                icon={<Icon as={revealAll ? FiEyeOff : FiEye} />}
-                color="blackAlpha"
-                onClick={() => setRevealAll(!revealAll)}
-              />
-            </Tooltip>
-            <Tooltip label="Download .env" placement="top" hasArrow>
-              <IconButton
-                icon={<Icon as={FiDownloadCloud} />}
-                color="blackAlpha"
-                onClick={download}
-              />
-            </Tooltip>
-            <Button
-              fontSize="14"
-              fontWeight="500"
-              leftIcon={<Icon as={BiPlus} />}
-              onClick={onOpen}
-            >
-              Add secret
-            </Button>
+            {(access === "Read" || access === "Read Write") && (
+              <Tooltip
+                label={revealAll ? "Unreveal all" : "Reveal all"}
+                placement="top"
+                hasArrow
+              >
+                <IconButton
+                  icon={<Icon as={revealAll ? FiEyeOff : FiEye} />}
+                  color="blackAlpha"
+                  onClick={() => setRevealAll(!revealAll)}
+                />
+              </Tooltip>
+            )}
+            {(access === "Read" || access === "Write Read") && (
+              <Tooltip label="Download .env" placement="top" hasArrow>
+                <IconButton
+                  icon={<Icon as={FiDownloadCloud} />}
+                  color="blackAlpha"
+                  onClick={download}
+                />
+              </Tooltip>
+            )}
+            {(access === "Write" || access === "Read Write") && (
+              <Button
+                fontSize="14"
+                fontWeight="500"
+                leftIcon={<Icon as={BiPlus} />}
+                onClick={onOpen}
+              >
+                Add secret
+              </Button>
+            )}
           </Flex>
           <Box mt={3}>
             <ReactDataGrid
@@ -515,38 +529,40 @@ const Dashboard = () => {
               rowHeight={60}
             />
           </Box>
-          <Box
-            border="2px"
-            borderStyle="dashed"
-            borderColor="border"
-            mt="6"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            py="8"
-            gap="3"
-            borderRadius="3"
-            position="relative"
-          >
-            <Icon as={FiUploadCloud} fontSize="30" color="blackAlpha.600" />
-            <Text fontSize="16" fontWeight="500" color="blackAlpha.600">
-              Drag and drop .env files to upload
-            </Text>
-            <Input
-              type="file"
-              height="100%"
-              width="100%"
-              position="absolute"
-              top="0"
-              left="0"
-              opacity="0"
-              aria-hidden="true"
-              accept=".env"
-              multiple={false}
-              onChange={parse}
-              isDisabled={addLoading}
-            />
-          </Box>
+          {(access === "Write" || access === "Read Write") && (
+            <Box
+              border="2px"
+              borderStyle="dashed"
+              borderColor="border"
+              mt="6"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              py="8"
+              gap="3"
+              borderRadius="3"
+              position="relative"
+            >
+              <Icon as={FiUploadCloud} fontSize="30" color="blackAlpha.600" />
+              <Text fontSize="16" fontWeight="500" color="blackAlpha.600">
+                Drag and drop .env files to upload
+              </Text>
+              <Input
+                type="file"
+                height="100%"
+                width="100%"
+                position="absolute"
+                top="0"
+                left="0"
+                opacity="0"
+                aria-hidden="true"
+                accept=".env"
+                multiple={false}
+                onChange={parse}
+                isDisabled={addLoading}
+              />
+            </Box>
+          )}
         </React.Fragment>
       )}
     </SidebarWithHeader>

@@ -19,3 +19,8 @@ export const userAtom = atom({
   key: "user",
   default: userDefault,
 });
+
+export const userAccess = atom({
+  key: "access",
+  default: "Read Write",
+});

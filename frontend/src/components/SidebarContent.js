@@ -28,8 +28,8 @@ import {
 } from "react-icons/pi";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { Link, useLocation } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { userAtom } from "../state/user.atom";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { userAccess, userAtom } from "../state/user.atom";
 import { currentProjectAtom, projectsAtom } from "../state/projects.atom";
 import useAxios from "../hooks/useAxios";
 import useCustomToast from "../hooks/useCustomToast";
@@ -48,6 +48,7 @@ export const SidebarContent = ({ onClose, ...rest }) => {
   const [projects, setProjects] = useRecoilState(projectsAtom);
   const [currentProject, setCurrentProject] =
     useRecoilState(currentProjectAtom);
+  const setAccess = useSetRecoilState(userAccess);
 
   const { data, error, loading, trigger, remove } = useAxios(
     "GET",
@@ -67,6 +68,7 @@ export const SidebarContent = ({ onClose, ...rest }) => {
   useEffect(() => {
     if (data) {
       setProjects(data.projects);
+      setAccess(data.projects[0].access);
       remove();
     }
 
@@ -259,7 +261,10 @@ export const SidebarContent = ({ onClose, ...rest }) => {
                     _hover={{ bg: "blackAlpha.50" }}
                     cursor="pointer"
                     key={index}
-                    onClick={() => setCurrentProject(index)}
+                    onClick={() => {
+                      setCurrentProject(index);
+                      setAccess(project.access);
+                    }}
                   >
                     <Icon
                       as={PiCheckBold}
