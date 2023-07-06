@@ -98,6 +98,27 @@ namespace Api.Server.Controllers
             });
         }
 
+        [HttpGet, Authorize]
+        public IActionResult GetSessions()
+        {
+            var user = _userRepo.GetUser(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)!.Value);
+            if (user == null)
+            {
+                return BadRequest(new
+                {
+                    status = false,
+                    message = "Invalid token"
+                });
+            }
+
+            IEnumerable<SessionModel> sessions = _sessionRepo.GetSessions(user.Id);
+            return Ok(new
+            {
+                status = true,
+                sessions,
+            });
+        }
+
         [HttpDelete, Authorize]
         public IActionResult DeleteSession(RevokeTokenDto request)
         {

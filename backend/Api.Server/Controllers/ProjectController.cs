@@ -48,7 +48,7 @@ namespace Api.Server.Controllers
             projectModel.ApiKey = tokens.ApiKey;
             projectModel.BelongsTo = user.EnterpriseId;
 
-            _projectRepo.CreateProject(projectModel);
+            _projectRepo.CreateProject(projectModel, user.Id);
             _projectRepo.SaveChanges();
 
             return Ok(new
@@ -87,6 +87,26 @@ namespace Api.Server.Controllers
                 status = true,
                 project
             });
+        }
+
+        [HttpGet("projects"), Authorize(Roles = "Owner, Admin, Project Manager, Employee")]
+        public IActionResult GetProjects()
+        {
+            UsersModel? requestedUser = _userRepo.GetUser(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)!.Value);
+            if (requestedUser == null)
+            {
+                return BadRequest(new
+                {
+                    status = false,
+                    message = "Invalid token"
+                });
+            }
+
+            return Ok(new
+            {
+                status = true,
+                projects = _projectRepo.GetProjects(requestedUser.Id)
+            }) ;
         }
 
         [HttpPatch, Authorize(Roles = "Owner, Admin, Project Manager")]
@@ -169,7 +189,7 @@ namespace Api.Server.Controllers
                 });
             }
 
-            UsersModel? addingMember = _userRepo.GetUser(request.UserId, requestedUser.EnterpriseId);
+            UsersModel? addingMember = _userRepo.GetUser(request.Email, requestedUser.EnterpriseId);
             if (addingMember == null)
             {
                 return BadRequest(new
@@ -189,7 +209,21 @@ namespace Api.Server.Controllers
                 });
             }
 
-            MapProjectUser memberToAdd = _mapper.Map<MapProjectUser>(request);
+            MapProjectUser? mp = _projectRepo.GetMember(addingMember.Id, request.ProjectId);
+            if (mp != null)
+            {
+                return BadRequest(new { 
+                    status = false,
+                    message = "User already mapped"
+                });
+            }
+
+            MapProjectUser memberToAdd = new()
+            {
+                AccessId = request.AccessId,
+                ProjectId = request.ProjectId,
+                UserId = addingMember.Id,
+            };
             _projectRepo.AddMember(memberToAdd);
             _projectRepo.SaveChanges();
 
@@ -244,8 +278,8 @@ namespace Api.Server.Controllers
             });
         }
 
-        [HttpGet("members"), Authorize(Roles = "Owner, Admin, Project Manager, Employee")]
-        public IActionResult GetMembers(GetMembersDto request)
+        [HttpGet("members"), Authorize]
+        public IActionResult GetMembers([FromQuery] GetMembersDto request)
         {
             UsersModel? requestedUser = _userRepo.GetUser(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)!.Value);
             if (requestedUser == null)

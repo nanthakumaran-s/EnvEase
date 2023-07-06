@@ -14,6 +14,7 @@ namespace Api.Server.Data
         public DbSet<RoleModel> Role { get; set; }
         public DbSet<AccessModel> Access { get; set; }
         public DbSet<SessionModel> Session { get; set; }
+        public DbSet<EnvModel> Env { get; set; }
 
     }
 }

@@ -37,9 +37,34 @@ namespace Api.Server.Repos.UserRepo
             return _dbContext.Users.Where(u => u.Id == id && u.EnterpriseId == enterpriseId).FirstOrDefault();
         }
 
+        public UsersModel? GetUser(string email, int enterpriseId)
+        {
+            return _dbContext.Users.Where(u => u.Email == email && u.EnterpriseId == enterpriseId).FirstOrDefault();
+        }
+
         public void UpdateUser(UsersModel user)
         {
             _dbContext.Users.Update(user);
+        }
+
+        public IEnumerable<object> GetUsers(int enterpriseId)
+        {
+            return _dbContext
+                .Users
+                .Where(u => u.EnterpriseId == enterpriseId)
+                .Join(
+                    _dbContext.Role,
+                    u => u.RoleId,
+                    r => r.Id,
+                    (u, r) => new
+                    {
+                        u.Id,
+                        u.Name,
+                        u.Email,
+                        r.Role
+                    }
+                )
+                .ToList();
         }
 
         public RoleModel? GetRole(int id)

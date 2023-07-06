@@ -5,8 +5,9 @@ namespace Api.Server.Repos.ProjectRepo
     public interface IProjectRepo
     {
         // Project Model
-        void CreateProject(ProjectModel project);
+        void CreateProject(ProjectModel project, int userId);
         ProjectModel? GetProject(int id, int enterpriseId);
+        IEnumerable<object> GetProjects(int userId);
         void UpdateProject(ProjectModel project);
         void DeleteProject(ProjectModel project);
 

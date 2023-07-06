@@ -9,7 +9,9 @@ namespace Api.Server.Repos.UserRepo
         UsersModel? GetUser(string email);
         UsersModel? GetUser(int id);
         UsersModel? GetUser(int id, int enterpriseId);
+        UsersModel? GetUser(string email, int enterpriseId);
         void UpdateUser(UsersModel user);
+        IEnumerable<object> GetUsers(int enterpriseId);
 
 
         // Role

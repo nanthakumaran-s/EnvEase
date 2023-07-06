@@ -1,6 +1,8 @@
-﻿using Api.Server.Dto.Incoming;
+﻿using Api.Server.Data;
+using Api.Server.Dto.Incoming;
 using Api.Server.Dto.Outgoing;
 using Api.Server.Models;
+using Api.Server.Repos.EnterpriseRepo;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,12 +18,16 @@ namespace Api.Server.Controllers
         private readonly IMapper _mapper;
         private readonly IBCryptUtils _bcryptUtils;
         private readonly ISessionUtils _sessionUtils;
+        private readonly ApplicationDbContext _dbContext;
+        private readonly IEnterpriseRepo _enterpriseRepo;
 
-        public AuthController(IUserRepo userRepo, IMapper mapper, IBCryptUtils bCryptUtils, ISessionUtils sessionUtils) {
+        public AuthController(IUserRepo userRepo, IMapper mapper, IBCryptUtils bCryptUtils, ISessionUtils sessionUtils, ApplicationDbContext dbContext, IEnterpriseRepo enterpriseRepo) {
             _userRepo = userRepo;
             _mapper = mapper;
             _bcryptUtils = bCryptUtils;
             _sessionUtils = sessionUtils;
+            _dbContext = dbContext;
+            _enterpriseRepo = enterpriseRepo;
         }
 
         [HttpPost("register"), Authorize(Roles = "Super Admin, Owner, Admin, HR, Project Manager")]
@@ -46,7 +52,7 @@ namespace Api.Server.Controllers
                 });
             }
 
-            if (requestedBy.RoleId > request.RoleId) {
+            if (requestedBy.RoleId >= request.RoleId) {
                 return BadRequest(new
                 {
                     status = false,
@@ -102,6 +108,60 @@ namespace Api.Server.Controllers
                 status = true,
                 message = "Authenticated",
                 user = authenticatedUser
+            });
+        }
+
+        [HttpDelete, Authorize]
+        public IActionResult DeleteUser(DeleteUserDto request)
+        {
+            UsersModel? user = _userRepo.GetUser(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)!.Value);
+            if (user == null)
+            {
+                return BadRequest(new
+                {
+                    status = false,
+                    message = "Invalid tokens"
+                });
+            }
+
+            EnterpriseModel? enterprise = _enterpriseRepo.GetEnterprise(user.EnterpriseId);
+            if (enterprise == null)
+            {
+                return BadRequest(new
+                {
+                    status = false,
+                    message = "No enterprise found"
+                });
+            }
+
+            UsersModel? userToDelete = _userRepo.GetUser(request.Id);
+            if (userToDelete == null)
+            {
+                return BadRequest(new
+                {
+                    status = false,
+                    message = "Invalid user id"
+                });
+            }
+
+            if (user.EnterpriseId != userToDelete.EnterpriseId || user.RoleId >= userToDelete.RoleId)
+            {
+                return BadRequest(new
+                {
+                    status = false,
+                    message = "Out of scope"
+                });
+            }
+
+            _dbContext.Users.Remove(userToDelete);
+            _dbContext.Session.RemoveRange(_dbContext.Session.Where(s => s.UserId == request.Id));
+            _dbContext.MapProjectUser.RemoveRange(_dbContext.MapProjectUser.Where(mp => mp.UserId == request.Id));
+            _dbContext.SaveChanges();
+
+            return Ok(new
+            {
+                status = true,
+                message = "User removed"
             });
         }
     }

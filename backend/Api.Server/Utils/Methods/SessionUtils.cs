@@ -89,7 +89,7 @@ namespace Api.Server.Utils.Methods
             var token = new JwtSecurityToken(
                 claims: claims,
                 signingCredentials: creds,
-                expires: DateTime.Now.AddMilliseconds(1)
+                expires: DateTime.Now.AddDays(1)
             );
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 

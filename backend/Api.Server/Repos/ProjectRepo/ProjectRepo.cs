@@ -14,14 +14,55 @@ namespace Api.Server.Repos.ProjectRepo
         }
 
         // Project Model
-        public void CreateProject(ProjectModel project)
+        public void CreateProject(ProjectModel project, int userId)
         {
             _dbContext.Project.Add(project);
+            _dbContext.SaveChanges();
+            var projectCreated = _dbContext.Project.Where(p => p.ApiKey == project.ApiKey).FirstOrDefault();
+            MapProjectUser mp = new()
+            {
+                UserId = userId,
+                ProjectId = projectCreated!.Id,
+                AccessId = 4
+            };
+
+            _dbContext.MapProjectUser.Add(mp);
         }
 
         public ProjectModel? GetProject(int id, int enterpriseId)
         {
             return _dbContext.Project.Where(p => p.Id == id && p.BelongsTo == enterpriseId).FirstOrDefault();
+        }
+
+        public IEnumerable<object> GetProjects(int UserId)
+        {
+            return _dbContext
+                .MapProjectUser
+                .Where(mp => mp.UserId == UserId)
+                .Join(
+                    _dbContext.Project,
+                    (mp) => mp.ProjectId,
+                    (p) => p.Id,
+                    (mp, p) => new {
+                        p.Id,
+                        p.Name,
+                        p.ApiKey,
+                        mp.AccessId
+                    }
+                 )
+                .Join(
+                    _dbContext.Access,
+                    (mp) => mp.AccessId,
+                    (a) => a.Id,
+                    (mp, a) => new
+                    {
+                        mp.Id,
+                        mp.Name,
+                        mp.ApiKey,
+                        a.Access
+                    }
+                )
+                .ToList();
         }
 
         public void UpdateProject(ProjectModel project)
@@ -58,6 +99,7 @@ namespace Api.Server.Repos.ProjectRepo
                     u => u.Id,
                     (mp, u) => new
                     {
+                        u.Id,
                         u.Name,
                         u.Email,
                         mp.AccessId
@@ -69,6 +111,7 @@ namespace Api.Server.Repos.ProjectRepo
                     a => a.Id,
                     (mp, a) => new
                     {
+                        mp.Id,
                         mp.Name,
                         mp.Email,
                         a.Access,

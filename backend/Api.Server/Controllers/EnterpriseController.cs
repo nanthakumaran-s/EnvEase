@@ -68,5 +68,35 @@ namespace Api.Server.Controllers
                 enterprise,
             });
         }
+
+        [HttpGet("members"), Authorize]
+        public IActionResult GetMembers()
+        {
+            UsersModel? user = _userRepo.GetUser(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)!.Value);
+            if (user == null)
+            {
+                return BadRequest(new
+                {
+                    status = false,
+                    message = "Invalid tokens"
+                });
+            }
+
+            EnterpriseModel? enterprise = _enterpriseRepo.GetEnterprise(user.EnterpriseId);
+            if (enterprise == null)
+            {
+                return BadRequest(new
+                {
+                    status = false,
+                    message = "No enterprise found"
+                });
+            }
+
+            return Ok(new
+            {
+                status = true,
+                members = _userRepo.GetUsers(user.EnterpriseId)
+            });
+        }
     }
 }
