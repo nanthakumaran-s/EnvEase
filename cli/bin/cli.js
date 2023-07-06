@@ -4,6 +4,7 @@ import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import { login, logout } from "./services/config.js";
 import { inject } from "./services/inject.js";
+import { share } from "./services/share.js";
 
 yargs(hideBin(process.argv))
   .command("login", "Login to EnvEase CLI", login)
@@ -15,4 +16,8 @@ yargs(hideBin(process.argv))
 
 yargs(hideBin(process.argv))
   .command("inject", "Inject environment variables", inject)
+  .parse();
+
+yargs(hideBin(process.argv))
+  .command("share", "Share environment variables", share)
   .parse();

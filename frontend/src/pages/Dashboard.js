@@ -155,6 +155,13 @@ const Dashboard = () => {
       for (let i = 0; i < content.length; i++) {
         const obj = {};
         const keyValuePair = content[i].split("=");
+        if (
+          keyValuePair[0] === "" ||
+          keyValuePair[0] === undefined ||
+          keyValuePair[1] === undefined
+        ) {
+          continue;
+        }
         obj["key"] = keyValuePair[0];
         obj["value"] = keyValuePair[1];
         envs.push(obj);
