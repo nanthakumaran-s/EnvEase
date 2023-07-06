@@ -36,64 +36,157 @@ import {
   FiUploadCloud,
 } from "react-icons/fi";
 import { BiPlus } from "react-icons/bi";
-import { PiCheckBold } from "react-icons/pi";
 import { useForm } from "react-hook-form";
+import { useRecoilValue } from "recoil";
+import { currentProjectAtom, projectsAtom } from "../state/projects.atom";
+import useAxios from "../hooks/useAxios";
+import useCustomToast from "../hooks/useCustomToast";
+
+const type = ["Development", "Testing", "Production"];
 
 const Dashboard = () => {
-  const [dataForGrid, setDataForGrid] = useState([
-    {
-      id: 1,
-      key: "MONGO_URI",
-      value: "Some value",
-      toShow: false,
-    },
-    {
-      id: 2,
-      key: "MONGO_URI",
-      value: "Some valu",
-      toShow: false,
-    },
-    {
-      id: 3,
-      key: "MONGO_URI",
-      value: "Some valu",
-      toShow: false,
-    },
-    {
-      id: 4,
-      key: "MONGO_URI",
-      value: "Some valu",
-      toShow: false,
-    },
-    {
-      id: 5,
-      key: "MONGO_URI",
-      value: "Some valu",
-      toShow: false,
-    },
-    {
-      id: 6,
-      key: "MONGO_URI",
-      value: "Some valu",
-      toShow: false,
-    },
-    {
-      id: 7,
-      key: "MONGO_URI",
-      value: "Some valu",
-      toShow: false,
-    },
-    {
-      id: 8,
-      key: "MONGO_URI",
-      value: "Some valu",
-      toShow: false,
-    },
-  ]);
+  const { data, error, loading, trigger, remove } = useAxios("GET", "/env");
+  const {
+    data: addData,
+    error: addError,
+    loading: addLoading,
+    trigger: addTrigger,
+    remove: addRemove,
+  } = useAxios("POST", "/env");
+  const {
+    data: updateData,
+    error: updateError,
+    loading: updateLoading,
+    trigger: updateTrigger,
+    remove: updateRemove,
+  } = useAxios("PATCH", "/env");
+  const {
+    data: deleteData,
+    error: deleteError,
+    loading: deleteLoading,
+    trigger: deleteTrigger,
+    remove: deleteRemove,
+  } = useAxios("DELETE", "/env");
+
+  const projects = useRecoilValue(projectsAtom);
+  const currentProject = useRecoilValue(currentProjectAtom);
+  const [selectedType, setSelectedType] = useState(type[0]);
+
+  useEffect(() => {
+    if (projects.length > 0) {
+      trigger({
+        projectId: projects[currentProject].id,
+        type: selectedType,
+      });
+    }
+  }, [selectedType]);
+
+  useEffect(() => {
+    if (data) {
+      setDataForGrid(
+        data.envs.map((e, i) => ({ ...e, refId: i + 1, toShow: false }))
+      );
+      remove();
+    }
+
+    if (addData) {
+      trigger({
+        projectId: projects[currentProject].id,
+        type: selectedType,
+      });
+      addRemove();
+      onClose();
+    }
+
+    if (updateData) {
+      trigger({
+        projectId: projects[currentProject].id,
+        type: selectedType,
+      });
+      updateRemove();
+      onClose();
+    }
+
+    if (deleteData) {
+      trigger({
+        projectId: projects[currentProject].id,
+        type: selectedType,
+      });
+      deleteRemove();
+    }
+  }, [data, addData, updateData, deleteData]);
+
+  const { loadingToast, errorToast, closeAll } = useCustomToast();
+
+  useEffect(() => {
+    if (error || addError || updateError || deleteError) {
+      errorToast("Some error occurred. Please try again later.");
+    }
+  }, [error, addError, updateError, deleteError]);
+
+  useEffect(() => {
+    if (loading || deleteLoading) {
+      loadingToast();
+    }
+
+    if (!loading && !deleteLoading) {
+      closeAll();
+    }
+  }, [loading, deleteLoading]);
+
+  useEffect(() => {
+    if (projects.length > 0) {
+      trigger({
+        projectId: projects[currentProject].id,
+        type: type[0],
+      });
+    }
+  }, [projects]);
+
+  const [dataForGrid, setDataForGrid] = useState([]);
+
+  const parse = async (event) => {
+    const fileReader = new FileReader();
+    fileReader.readAsText(event.target.files[0], "UTF-8");
+    fileReader.onload = async (e) => {
+      let content = e.target.result;
+      content = content.toString().split("\n");
+      const envs = [];
+      for (let i = 0; i < content.length; i++) {
+        const obj = {};
+        const keyValuePair = content[i].split("=");
+        obj["key"] = keyValuePair[0];
+        obj["value"] = keyValuePair[1];
+        envs.push(obj);
+      }
+      for (let i = 0; i < envs.length; i++) {
+        addTrigger({
+          key: envs[i].key,
+          value: envs[i].value,
+          projectId: projects[currentProject].id,
+          type: selectedType,
+        });
+      }
+    };
+    event.target.value = null;
+  };
+
+  const download = async () => {
+    let content = "";
+    for (let i = 0; i < dataForGrid.length; i++) {
+      content += `${dataForGrid[i].key}=${dataForGrid[i].value}\n`;
+    }
+    const blob = new Blob([content], { type: "text/document" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.download = "env";
+    link.href = url;
+    link.click();
+  };
 
   const columns = [
     {
-      name: "id",
+      name: "refId",
       header: "Id",
       maxWidth: 60,
       render: ({ value }) => {
@@ -193,6 +286,11 @@ const Dashboard = () => {
                 _hover={{
                   color: "brand.500",
                 }}
+                onClick={() => {
+                  deleteTrigger({
+                    id: data.id,
+                  });
+                }}
               />
             </Tooltip>
           </Flex>
@@ -212,10 +310,6 @@ const Dashboard = () => {
     setValue,
     reset,
   } = useForm();
-
-  const onModelSubmit = async (data) => {
-    console.log(data);
-  };
 
   const [revealAll, setRevealAll] = useState(false);
 
@@ -247,7 +341,24 @@ const Dashboard = () => {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <form onSubmit={handleSubmit(onModelSubmit)}>
+            <form
+              onSubmit={handleSubmit((data) => {
+                if (isUpdate) {
+                  updateTrigger({
+                    id: idToUpdate,
+                    value: data.value,
+                    projectId: projects[currentProject].id,
+                  });
+                } else {
+                  addTrigger({
+                    key: data.key,
+                    value: data.value,
+                    projectId: projects[currentProject].id,
+                    type: selectedType,
+                  });
+                }
+              })}
+            >
               <FormControl isInvalid={errors.key ? true : false}>
                 <FormLabel fontSize="14" fontWeight="600">
                   Key
@@ -257,6 +368,7 @@ const Dashboard = () => {
                   fontSize="14"
                   borderRadius="5"
                   type="text"
+                  isDisabled={isUpdate}
                   {...register("key", { required: true })}
                 />
                 {errors.key ? (
@@ -301,6 +413,7 @@ const Dashboard = () => {
                   fontSize="14"
                   borderRadius="3"
                   type="submit"
+                  isLoading={addLoading || updateLoading}
                 >
                   {isUpdate ? "Update" : "Add"}
                 </Button>
@@ -309,105 +422,123 @@ const Dashboard = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
-
-      <BreadCrumbBar sections={["Some Project", "Secrets"]} />
-      <Flex mt={4} alignItems="center" justifyContent="space-between">
-        <Heading fontSize="24">Secrets</Heading>
-        <Select
-          width="200px"
-          iconColor="blackAlpha.700"
-          iconSize="18"
-          variant="filled"
-          icon={<TiArrowSortedDown />}
-          cursor="pointer"
-          fontSize="14"
-          fontWeight="500"
-        >
-          <option value="Development">Development</option>
-          <option value="Testing">Testing</option>
-          <option value="Production">Production</option>
-        </Select>
-      </Flex>
-
-      <Flex
-        width="100%"
-        alignItems="center"
-        justifyContent="flex-end"
-        mt={3}
-        gap="3"
-      >
-        <Tooltip
-          label={revealAll ? "Unreveal all" : "Reveal all"}
-          placement="top"
-          hasArrow
-        >
-          <IconButton
-            icon={<Icon as={revealAll ? FiEyeOff : FiEye} />}
-            color="blackAlpha"
-            onClick={() => setRevealAll(!revealAll)}
-          />
-        </Tooltip>
-        <Tooltip label="Download .env" placement="top" hasArrow>
-          <IconButton icon={<Icon as={FiDownloadCloud} />} color="blackAlpha" />
-        </Tooltip>
-        <Button
-          fontSize="14"
-          fontWeight="500"
-          leftIcon={<Icon as={BiPlus} />}
-          onClick={onOpen}
-        >
-          Add secret
-        </Button>
-        <Button
-          fontSize="14"
-          fontWeight="500"
-          leftIcon={<Icon as={PiCheckBold} />}
-          colorScheme="green"
-          isDisabled
-        >
-          Save changes
-        </Button>
-      </Flex>
-      <Box mt={3}>
-        <ReactDataGrid
-          idProperty="id"
-          style={gridStyle}
-          columns={columns}
-          pagination
-          dataSource={dataForGrid}
-          defaultLimit={10}
-          rowHeight={60}
-        />
-      </Box>
-      <Box
-        border="2px"
-        borderStyle="dashed"
-        borderColor="border"
-        mt="6"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        py="8"
-        gap="3"
-        borderRadius="3"
-        position="relative"
-      >
-        <Icon as={FiUploadCloud} fontSize="30" color="blackAlpha.600" />
-        <Text fontSize="16" fontWeight="500" color="blackAlpha.600">
-          Drag and drop .env files to upload
-        </Text>
-        <Input
-          type="file"
-          height="100%"
+      {projects.length === 0 ? (
+        <Flex
           width="100%"
-          position="absolute"
-          top="0"
-          left="0"
-          opacity="0"
-          aria-hidden="true"
-          accept=".env"
-        />
-      </Box>
+          height="80vh"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Text fontSize="24" fontWeight="600">
+            No Projects Found
+          </Text>
+        </Flex>
+      ) : (
+        <React.Fragment>
+          <BreadCrumbBar
+            sections={[projects[currentProject].name, "Secrets"]}
+          />
+          <Flex mt={4} alignItems="center" justifyContent="space-between">
+            <Heading fontSize="24">Secrets</Heading>
+            <Select
+              width="200px"
+              iconColor="blackAlpha.700"
+              iconSize="18"
+              variant="filled"
+              icon={<TiArrowSortedDown />}
+              cursor="pointer"
+              fontSize="14"
+              fontWeight="500"
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+            >
+              {type.map((t, i) => (
+                <option key={i} value={t}>
+                  {t}
+                </option>
+              ))}
+            </Select>
+          </Flex>
+
+          <Flex
+            width="100%"
+            alignItems="center"
+            justifyContent="flex-end"
+            mt={3}
+            gap="3"
+          >
+            <Tooltip
+              label={revealAll ? "Unreveal all" : "Reveal all"}
+              placement="top"
+              hasArrow
+            >
+              <IconButton
+                icon={<Icon as={revealAll ? FiEyeOff : FiEye} />}
+                color="blackAlpha"
+                onClick={() => setRevealAll(!revealAll)}
+              />
+            </Tooltip>
+            <Tooltip label="Download .env" placement="top" hasArrow>
+              <IconButton
+                icon={<Icon as={FiDownloadCloud} />}
+                color="blackAlpha"
+                onClick={download}
+              />
+            </Tooltip>
+            <Button
+              fontSize="14"
+              fontWeight="500"
+              leftIcon={<Icon as={BiPlus} />}
+              onClick={onOpen}
+            >
+              Add secret
+            </Button>
+          </Flex>
+          <Box mt={3}>
+            <ReactDataGrid
+              idProperty="id"
+              style={gridStyle}
+              columns={columns}
+              pagination
+              dataSource={dataForGrid}
+              defaultLimit={10}
+              rowHeight={60}
+            />
+          </Box>
+          <Box
+            border="2px"
+            borderStyle="dashed"
+            borderColor="border"
+            mt="6"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            py="8"
+            gap="3"
+            borderRadius="3"
+            position="relative"
+          >
+            <Icon as={FiUploadCloud} fontSize="30" color="blackAlpha.600" />
+            <Text fontSize="16" fontWeight="500" color="blackAlpha.600">
+              Drag and drop .env files to upload
+            </Text>
+            <Input
+              type="file"
+              height="100%"
+              width="100%"
+              position="absolute"
+              top="0"
+              left="0"
+              opacity="0"
+              aria-hidden="true"
+              accept=".env"
+              multiple={false}
+              onChange={parse}
+              isDisabled={addLoading}
+            />
+          </Box>
+        </React.Fragment>
+      )}
     </SidebarWithHeader>
   );
 };

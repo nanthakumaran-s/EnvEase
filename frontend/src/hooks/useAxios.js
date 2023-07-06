@@ -19,7 +19,7 @@ const useAxios = (method, url) => {
     async (config) => {
       const tokens = JSON.parse(localStorage.getItem("tokens"));
       if (tokens) {
-        config.headers["Authorization"] = ` bearer ${tokens.accessToken}`;
+        config.headers["Authorization"] = `bearer ${tokens.accessToken}`;
       }
       return config;
     },
@@ -36,7 +36,6 @@ const useAxios = (method, url) => {
       });
       return resp.data;
     } catch (e) {
-      console.log("Error", e);
       setError(e);
     }
   };
@@ -47,7 +46,6 @@ const useAxios = (method, url) => {
     },
     async function (error) {
       const originalRequest = error.config;
-      console.log(error);
       if (error.code === "ERR_NETWORK" && !originalRequest._retry) {
         const tokens = JSON.parse(localStorage.getItem("tokens"));
         if (tokens == null) {
@@ -71,14 +69,22 @@ const useAxios = (method, url) => {
   const trigger = async (reqData = {}) => {
     setLoading(true);
     try {
-      const { data: response } = await customFetch({
-        method: method,
-        url: url,
-        data: reqData,
-      });
-      setData(response);
+      if (method === "GET") {
+        const { data: response } = await customFetch({
+          method: method,
+          url: url,
+          params: reqData,
+        });
+        setData(response);
+      } else {
+        const { data: response } = await customFetch({
+          method: method,
+          url: url,
+          data: reqData,
+        });
+        setData(response);
+      }
     } catch (error) {
-      console.error(error);
       setError(error);
     }
     setLoading(false);

@@ -12,7 +12,6 @@ const PrivateRoute = () => {
 
   useEffect(() => {
     if (data) {
-      console.log(data);
       setUser({
         name: data.user.name,
         email: data.user.email,
