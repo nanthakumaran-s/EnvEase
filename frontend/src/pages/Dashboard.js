@@ -160,6 +160,9 @@ const Dashboard = () => {
         envs.push(obj);
       }
       for (let i = 0; i < envs.length; i++) {
+        if (envs[i].key === "" || envs[i].value === "") {
+          return;
+        }
         addTrigger({
           key: envs[i].key,
           value: envs[i].value,
