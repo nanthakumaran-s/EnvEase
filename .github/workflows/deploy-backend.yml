@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "backend/Api.Server/**"
 
 env:
   AZURE_WEBAPP_NAME: envease
