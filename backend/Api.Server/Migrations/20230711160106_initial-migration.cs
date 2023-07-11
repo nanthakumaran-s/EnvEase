@@ -31,11 +31,28 @@ namespace Api.Server.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    HashKey = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Enterprise", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Env",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Key = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProjectId = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Env", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -128,6 +145,9 @@ namespace Api.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Enterprise");
+
+            migrationBuilder.DropTable(
+                name: "Env");
 
             migrationBuilder.DropTable(
                 name: "MapProjectUser");

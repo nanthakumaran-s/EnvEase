@@ -9,6 +9,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Azure.Identity;
+using Azure.Core;
+using Azure.Security.KeyVault.Secrets;
+using StackExchange.Redis;
 
 namespace Api.Server
 {
@@ -18,10 +22,23 @@ namespace Api.Server
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            SecretClientOptions options = new SecretClientOptions()
+            {
+                Retry =
+                {
+                    Delay = TimeSpan.FromSeconds(2),
+                    MaxDelay = TimeSpan.FromSeconds(16),
+                    MaxRetries = 5,
+                    Mode = RetryMode.Exponential,
+                }
+            };
+            var client = new SecretClient(new Uri("https://envease-vault.vault.azure.net/"), new DefaultAzureCredential(), options);
+
+            KeyVaultSecret sqlDB = client.GetSecret("MSSQL-CONNECTION-STRING");
+            KeyVaultSecret redisDB = client.GetSecret("REDIS-CONNECTION-STRING");
+
             builder.Services.AddDbContext<ApplicationDbContext>(options => 
-                options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("dB")
-                )
+                options.UseSqlServer(sqlDB.Value)
             );
 
             var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("JwtConfig:Secret").Value!);
@@ -44,6 +61,8 @@ namespace Api.Server
                 jwt.SaveToken = true;
                 jwt.TokenValidationParameters = tokenValidationParameter;
             });
+
+            //builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisDB.Value));
 
             builder.Services.AddCors(options =>
             {

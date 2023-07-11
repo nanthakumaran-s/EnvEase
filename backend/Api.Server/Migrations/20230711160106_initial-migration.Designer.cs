@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230706055037_envmodel-added")]
-    partial class envmodeladded
+    [Migration("20230711160106_initial-migration")]
+    partial class initialmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,6 +64,34 @@ namespace Api.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Enterprise");
+                });
+
+            modelBuilder.Entity("Api.Server.Models.EnvModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Env");
                 });
 
             modelBuilder.Entity("Api.Server.Models.MapProjectUser", b =>
