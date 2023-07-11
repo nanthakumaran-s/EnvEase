@@ -19,20 +19,20 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "16"
-      - run: npm install
-      - run: npm run transcompile
-      - run: npm install -g pkg
-      - name: Build
-        run: pkg build/envease.js -o envease -t node16-linux-x64,node16-linux-arm64,node16-macos-x64,node16-macos-arm64,node16-win-x64,node16-win-arm64
+      - run: |
+          npm install
+          npm run transcompile
+          npm install -g pkg
+          pkg build/envease.js -o envease -t node16-linux-x64,node16-linux-arm64,node16-macos-x64,node16-macos-arm64,node16-win-x64,node16-win-arm64
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            envease-linux-arm64
-            envease-linux-x64
-            envease-macos-arm64
-            envease-macos-x64
-            envease-win-arm64.exe
-            envease-win-x64.exe
+            ./cli/envease-linux-arm64
+            ./cli/envease-linux-x64
+            ./cli/envease-macos-arm64
+            ./cli/envease-macos-x64
+            ./cli/envease-win-arm64.exe
+            ./cli/envease-win-x64.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
