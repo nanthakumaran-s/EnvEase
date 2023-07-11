@@ -23,13 +23,13 @@ jobs:
           dotnet-version: "${{env.DOTNET_VERSION}}"
 
       - name: Restore
-        run: dotnet restore ./backend/backend.sln
+        run: dotnet restore ./backend/Api.Server/Api.Server.sln
 
       - name: Build
-        run: dotnet build ./backend/backend.sln --configuration Release --no-restore
+        run: dotnet build ./backend/Api.Server/Api.Server.sln --configuration Release --no-restore
 
       - name: Publish
-        run: dotnet publish ./backend/backend.sln --configuration Release --no-build --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
+        run: dotnet publish ./backend/Api.Server/Api.Server.sln --configuration Release --no-build --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
 
       - name: Deployment
         uses: azure/webapps-deploy@v2
