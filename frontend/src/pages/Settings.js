@@ -11,7 +11,6 @@ import { currentProjectAtom, projectsAtom } from "../state/projects.atom";
 import useAxios from "../hooks/useAxios";
 import { userAtom } from "../state/user.atom";
 import useCustomToast from "../hooks/useCustomToast";
-import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
   const user = useRecoilValue(userAtom);
@@ -23,11 +22,9 @@ const Settings = () => {
   const { data, error, loading, trigger } = useAxios("DELETE", "/project");
   const { loadingToast, errorToast, closeAll } = useCustomToast();
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     if (data) {
-      navigate("/dashboard");
+      window.location.replace("/dashboard");
     }
   }, [data]);
 

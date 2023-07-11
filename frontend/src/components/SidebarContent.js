@@ -68,7 +68,9 @@ export const SidebarContent = ({ onClose, ...rest }) => {
   useEffect(() => {
     if (data) {
       setProjects(data.projects);
-      setAccess(data.projects[0].access);
+      if (data.projects.length > 0) {
+        setAccess(data.projects[0].access);
+      }
       remove();
     }
 
