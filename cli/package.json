@@ -10,14 +10,7 @@
   "scripts": {
     "dev": "node ./bin/cli.js",
     "transcompile": "esbuild --platform=node --bundle --outfile=build/envease.js bin/cli.js",
-    "pack": "npm-run-all --parallel package*",
-    "package-win-x64": "pkg -t node16-win-x64 -o out/envease-win-x64 build/envease.js",
-    "package-win-arm64": "pkg -t node16-win-arm64 -o out/envease-win-arm64 build/envease.js",
-    "package-lin-x64": "pkg -t node16-linux-x64 -o out/envease-linux-x64 build/envease.js",
-    "package-lin-arm64": "pkg -t node16-linux-arm64 -o out/envease-linux-arm64 build/envease.js",
-    "package-mac-x64": "pkg -t node16-macos-x64 -o out/envease-macos-x64 build/envease.js",
-    "package-mac-arm64": "pkg -t node16-macos-arm64 -o out/envease-macos-arm64 build/envease.js"
-
+    "pack": "pkg build/envease.js -o out/envease -t node16-linux-x64,node16-linux-arm64,node16-macos-x64,node16-macos-arm64,node16-win-x64,node16-win-arm64"
   },
   "author": "Nanthakumaran S <nanthankumaransenthil@gmail.com>",
   "license": "ISC",
@@ -31,6 +24,7 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "esbuild": "^0.18.11",
     "pkg": "^5.8.1"
   }
 }
