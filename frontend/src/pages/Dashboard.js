@@ -81,7 +81,7 @@ const Dashboard = () => {
         type: selectedType,
       });
     }
-  }, [selectedType]);
+  }, [selectedType, currentProject]);
 
   useEffect(() => {
     if (data) {
@@ -248,7 +248,7 @@ const Dashboard = () => {
       render: ({ data }) => {
         return (
           <Flex alignItems="center">
-            {(access === "Read" || access === "Read Write") && (
+            {access && (access === "Read" || access === "Read Write") && (
               <Tooltip
                 label={data.toShow ? "Unreveal" : "Reveal"}
                 placement="top"
@@ -275,7 +275,7 @@ const Dashboard = () => {
                 />
               </Tooltip>
             )}
-            {access === "Read Write" && (
+            {access && access === "Read Write" && (
               <Tooltip label="Edit" placement="top" hasArrow>
                 <IconButton
                   icon={<Icon as={HiOutlinePencil} />}
@@ -294,7 +294,7 @@ const Dashboard = () => {
                 />
               </Tooltip>
             )}
-            {access === "Read Write" && (
+            {access && access === "Read Write" && (
               <Tooltip label="Delete" placement="top" hasArrow>
                 <IconButton
                   icon={<Icon as={FiTrash2} />}
@@ -485,7 +485,7 @@ const Dashboard = () => {
             mt={3}
             gap="3"
           >
-            {(access === "Read" || access === "Read Write") && (
+            {access && (access === "Read" || access === "Read Write") && (
               <Tooltip
                 label={revealAll ? "Unreveal all" : "Reveal all"}
                 placement="top"
@@ -498,7 +498,7 @@ const Dashboard = () => {
                 />
               </Tooltip>
             )}
-            {(access === "Read" || access === "Write Read") && (
+            {access && (access === "Read" || access === "Read Write") && (
               <Tooltip label="Download .env" placement="top" hasArrow>
                 <IconButton
                   icon={<Icon as={FiDownloadCloud} />}
@@ -507,7 +507,7 @@ const Dashboard = () => {
                 />
               </Tooltip>
             )}
-            {(access === "Write" || access === "Read Write") && (
+            {access && (access === "Write" || access === "Read Write") && (
               <Button
                 fontSize="14"
                 fontWeight="500"
@@ -529,7 +529,7 @@ const Dashboard = () => {
               rowHeight={60}
             />
           </Box>
-          {(access === "Write" || access === "Read Write") && (
+          {access && (access === "Write" || access === "Read Write") && (
             <Box
               border="2px"
               borderStyle="dashed"

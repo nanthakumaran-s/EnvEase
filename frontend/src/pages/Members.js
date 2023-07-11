@@ -119,7 +119,7 @@ const Members = () => {
         projectId: projects[currentProject].id,
       });
     }
-  }, [projects]);
+  }, [projects, currentProject]);
 
   useEffect(() => {
     if (membersLoading || addMemberLoading || removeMemberLoading) {
