@@ -9,6 +9,9 @@ defaults:
   run:
     working-directory: ./cli
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
