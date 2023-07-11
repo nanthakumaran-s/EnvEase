@@ -23,16 +23,16 @@ jobs:
       - run: npm run transcompile
       - run: npm install -g pkg
       - name: Build
-        run: pkg build/envease.js -o out/envease -t node16-linux-x64,node16-linux-arm64,node16-macos-x64,node16-macos-arm64,node16-win-x64,node16-win-arm64
+        run: pkg build/envease.js -o envease -t node16-linux-x64,node16-linux-arm64,node16-macos-x64,node16-macos-arm64,node16-win-x64,node16-win-arm64
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            out/envease-linux-arm64
-            out/envease-linux-x64
-            out/envease-macos-arm64
-            out/envease-macos-x64
-            out/envease-win-arm64.exe
-            out/envease-win-x64.exe
+            envease-linux-arm64
+            envease-linux-x64
+            envease-macos-arm64
+            envease-macos-x64
+            envease-win-arm64.exe
+            envease-win-x64.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
