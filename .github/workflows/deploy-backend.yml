@@ -1,0 +1,39 @@
+name: Azure Webapp .NET CI/CD
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+env:
+  AZURE_WEBAPP_NAME: envease
+  AZURE_WEBAPP_PACKAGE_PATH: "./publish"
+  DOTNET_VERSION: "6.0.x"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "${{env.DOTNET_VERSION}}"
+
+      - name: Restore
+        run: dotnet restore ./backend/backend.sln
+
+      - name: Build
+        run: dotnet build ./backend/backend.sln --configuration Release --no-restore
+
+      - name: Publish
+        run: dotnet publish ./backend/backend.sln --configuration Release --no-build --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
+
+      - name: Deployment
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{env.AZURE_WEBAPP_NAME}}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_78BDFCDAE7D34BD5A42137DF42EDB88F }}
+          package: "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
