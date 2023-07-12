@@ -26,6 +26,17 @@ Share environment variables and secrets within teams easily and securely.
 - `inject`: Inject `.env` file for a specified project
 - `share`: Share `.env` file for a specified project
 
+## Local usage guide
+
+Clone the repo and start `docker daemon`
+
+> Change the KeyVault URI or else include `dbString` and `redisConnectionString` in `appSettings.json`
+> Change the `BASE_URL` on frontend and cli which are under `utils/constants.js`
+
+```sh
+docker compose up
+```
+
 ### Architecture diagram
 
 <img width="652" alt="image" src="https://github.com/nanthakumaran-s/EnvEase/assets/59391441/c3bca8d2-f046-4a3d-8051-43339967f4ce">
