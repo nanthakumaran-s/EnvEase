@@ -30,8 +30,7 @@ Share environment variables and secrets within teams easily and securely.
 
 Clone the repo and start `docker daemon`
 
-> Change the KeyVault URI or else include `dbString` and `redisConnectionString` in `appSettings.json`
-> Change the `BASE_URL` on frontend and cli which are under `utils/constants.js`
+> Change the KeyVault URI or else include `dbString` and `redisConnectionString` in `appSettings.json`. Change the `BASE_URL` on frontend and cli which are under `utils/constants.js`
 
 ```sh
 docker compose up
