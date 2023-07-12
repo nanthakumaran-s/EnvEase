@@ -8,6 +8,17 @@ Share environment variables and secrets within teams easily and securely.
 - [x] Integrated CLI
 - [x] Admin dashboard
 
+### Stack
+
+- `Frontend`: React Js
+- `Backend`: .NET
+- `CLI`: Node Js
+- `Cloud`: Azure - Azure App Service (Web App & Static Website), KeyVault, SQL Database, Redis Cache
+- `CI/CD`: GitHub Actions
+    1. Frontend Deploy Pipeline: Build and deploy frontend react project to Azure AppService (Static Website)
+    2. Backend Deploy Pipeline: Build and deploy backend .NET project to Azure AppService (WebApp)
+    3. CLI Release: Build binary files and create release
+
 ## CLI Instructions
 
 - `login`: Enter your credentials to login in to your envease account
