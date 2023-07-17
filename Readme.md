@@ -48,3 +48,8 @@ docker compose up
 ![project settings](https://github.com/nanthakumaran-s/EnvEase/assets/59391441/8c495bf0-1e46-4ad9-a4bd-71f936edf9f9)
 ![settings](https://github.com/nanthakumaran-s/EnvEase/assets/59391441/5bf6d525-c08a-4e36-b725-04670b5ffc0f)
 
+## Things to complete
+
+- [ ] Type based access rather than project based access
+- [ ] E2EE (End to end encryption)
+- [ ] Packages for languages for accessing env variables programmatically
